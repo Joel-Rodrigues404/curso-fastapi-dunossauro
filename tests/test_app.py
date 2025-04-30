@@ -41,6 +41,25 @@ def test_read_users(client):
     }
 
 
+def test_read_user(client):
+    response = client.get('/users/1')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'username': 'user name',
+        'email': 'useremail@example.com',
+        'id': 1,
+    }
+
+
+def test_read_user_retorna_404(client):
+    response = client.get(
+        '/users/3',
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
 def test_update_user(client):
     response = client.put(
         '/users/1',
@@ -52,7 +71,6 @@ def test_update_user(client):
         }
     )
 
-    # assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'username': 'test2',
         'email': 'test2@example.com',
@@ -60,12 +78,33 @@ def test_update_user(client):
     }
 
 
+def test_update_user_retorna_404(client):
+    response = client.put(
+        '/users/3',
+        json={
+            'password': 'passworduser',
+            'username': 'test2',
+            'email': 'test2@example.com',
+            'id': 1,
+        }
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
 def test_delete_user(client):
     response = client.delete(
         '/users/1'
     )
 
-    # assert response.status_code == HTTPStatus.OK
     assert response.json() == {
         'message': 'User deleted!'
     }
+
+
+def test_delete_user_retorna_404(client):
+    response = client.delete(
+        '/users/3',
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
